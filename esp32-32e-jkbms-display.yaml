@@ -1,0 +1,533 @@
+substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: C8:47:8C:E1:E2:AA  # 需要根据实际BMS蓝牙地址修改
+  protocol_version: JK02_24S  # 请根据BMS硬件版本选择：JK04/JK02_24S/JK02_32S
+  # 显示屏配置
+  display_width: "240"
+  display_height: "320"
+  # 引脚配置 - 根据ESP32-32E开发板
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4  # TFT_RST连接到EN，这里使用备用引脚
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0  # BOOT_KEY
+  # LED引脚
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(display_page) = 0;
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.f_flash: 80000000L
+
+external_components:
+  - source: ${external_components_source}
+    refresh: 0s
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  ap:
+    ssid: ${name}
+    password: "12345678"
+
+captive_portal:
+
+ota:
+  platform: esphome
+  on_begin:
+    then:
+      - switch.turn_off: ble_client_switch0
+      - logger.log: "BLE connection suspended for OTA update"
+
+logger:
+  level: INFO
+  logs:
+    esp32_ble_tracker: INFO
+    esp32_ble_client: INFO
+
+api:
+
+# 蓝牙配置
+esp32_ble_tracker:
+  scan_parameters:
+    active: false
+
+ble_client:
+  - mac_address: ${mac_address}
+    id: client0
+
+# JK-BMS 蓝牙组件
+jk_bms_ble:
+  - ble_client_id: client0
+    protocol_version: ${protocol_version}
+    throttle: 3s
+    id: bms0
+
+# 页面切换支持
+globals:
+  - id: display_page
+    type: int
+    initial_value: '0'
+    restore_value: false
+
+# 按钮用于切换页面
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: ${button_pin}
+      mode: INPUT_PULLUP
+      inverted: true
+    id: page_button
+    on_press:
+      then:
+        - lambda: |-
+            id(display_page) = (id(display_page) + 1) % 3;
+  - platform: jk_bms_ble
+    balancing:
+      id: balancing
+      internal: true
+    charging:
+      id: charging
+      internal: true
+    online_status:
+      id: online_status
+      internal: true
+    discharging:
+      id: discharging
+      internal: true
+    heating:
+      id: heating
+      internal: true
+
+# LED状态指示
+light:
+  - platform: monochromatic
+    output: backlight_output
+    name: "Display Backlight"
+    id: backlight
+    restore_mode: RESTORE_DEFAULT_ON
+    default_transition_length: 0.5s
+  - platform: rgb
+    red: led_red
+    green: led_green
+    blue: led_blue
+    name: "Status LED"
+    id: status_led
+    restore_mode: RESTORE_DEFAULT_OFF
+
+output:
+  - platform: ledc
+    pin: ${st7789_backlight_pin}
+    id: backlight_output
+    frequency: 1000 Hz
+  - platform: ledc
+    pin: ${led_red_pin}
+    id: led_red
+    frequency: 1000 Hz
+  - platform: ledc
+    pin: ${led_green_pin}
+    id: led_green
+    frequency: 1000 Hz
+  - platform: ledc
+    pin: ${led_blue_pin}
+    id: led_blue
+    frequency: 1000 Hz
+
+# 传感器配置 - 用于显示屏显示
+sensor:
+  - platform: jk_bms_ble
+    jk_bms_ble_id: bms0
+    min_cell_voltage:
+      id: min_cell_voltage
+      internal: true
+    max_cell_voltage:
+      id: max_cell_voltage
+      internal: true
+    delta_cell_voltage:
+      id: delta_cell_voltage
+      internal: true
+    average_cell_voltage:
+      id: average_cell_voltage
+      internal: true
+    cell_voltage_1:
+      id: cell_voltage_1
+      internal: true
+    cell_voltage_2:
+      id: cell_voltage_2
+      internal: true
+    cell_voltage_3:
+      id: cell_voltage_3
+      internal: true
+    cell_voltage_4:
+      id: cell_voltage_4
+      internal: true
+    cell_voltage_5:
+      id: cell_voltage_5
+      internal: true
+    cell_voltage_6:
+      id: cell_voltage_6
+      internal: true
+    cell_voltage_7:
+      id: cell_voltage_7
+      internal: true
+    cell_voltage_8:
+      id: cell_voltage_8
+      internal: true
+    cell_voltage_9:
+      id: cell_voltage_9
+      internal: true
+    cell_voltage_10:
+      id: cell_voltage_10
+      internal: true
+    cell_voltage_11:
+      id: cell_voltage_11
+      internal: true
+    cell_voltage_12:
+      id: cell_voltage_12
+      internal: true
+    cell_voltage_13:
+      id: cell_voltage_13
+      internal: true
+    cell_voltage_14:
+      id: cell_voltage_14
+      internal: true
+    cell_voltage_15:
+      id: cell_voltage_15
+      internal: true
+    cell_voltage_16:
+      id: cell_voltage_16
+      internal: true
+    total_voltage:
+      id: total_voltage
+      internal: true
+    current:
+      id: current
+      internal: true
+    power:
+      id: power
+      internal: true
+    temperature_sensor_1:
+      id: temperature_1
+      internal: true
+    temperature_sensor_2:
+      id: temperature_2
+      internal: true
+    power_tube_temperature:
+      id: mosfet_temp
+      internal: true
+    state_of_charge:
+      id: soc
+      internal: true
+    capacity_remaining:
+      id: capacity_remaining
+      internal: true
+    charging_cycles:
+      id: cycles
+      internal: true
+    total_runtime:
+      id: runtime
+      internal: true
+
+switch:
+  - platform: ble_client
+    ble_client_id: client0
+    id: ble_client_switch0
+    name: "Enable Bluetooth"
+
+text_sensor:
+  - platform: jk_bms_ble
+    errors:
+      id: errors
+      internal: true
+    software_version:
+      id: sw_version
+      internal: true
+    hardware_version:
+      id: hw_version
+      internal: true
+
+# ST7789 SPI 显示驱动配置
+spi:
+  clk_pin: ${spi_clk_pin}
+  mosi_pin: ${spi_mosi_pin}
+  miso_pin: ${spi_miso_pin}
+
+display:
+  - platform: st7789v
+    model: CUSTOM
+    width: ${display_width}
+    height: ${display_height}
+    reset_pin: ${st7789_reset_pin}
+    cs_pin: ${st7789_cs_pin}
+    dc_pin: ${st7789_dc_pin}
+    rotation: 270
+    backlight_pin: ${st7789_backlight_pin}
+    id: my_display
+    update_interval: 3s
+    lambda: |-
+      // 绘制背景
+      it.fill(COLOR_BLACK);
+      
+      // 绘制顶部标题栏
+      it.filled_rectangle(0, 0, ${display_width}, 40, 0x0033CC);
+      
+      // 页面标题
+      std::string page_title = "Overview";
+      if (id(display_page) == 1) page_title = "Cell Details";
+      if (id(display_page) == 2) page_title = "Info & Status";
+      
+      it.print(120, 20, id(roboto_20), COLOR_WHITE, TextAlign::CENTER, page_title.c_str());
+      
+      // 检查是否在线
+      bool is_online = id(online_status).state;
+      
+      // 绘制在线状态
+      if (is_online) {
+        it.filled_circle(20, 20, 6, COLOR_GREEN);
+      } else {
+        it.filled_circle(20, 20, 6, COLOR_RED);
+      }
+      
+      // 页面指示器
+      for (int i = 0; i < 3; i++) {
+        if (i == id(display_page)) {
+          it.filled_circle(200 + i*15, 20, 4, COLOR_WHITE);
+        } else {
+          it.circle(200 + i*15, 20, 4, COLOR_GRAY);
+        }
+      }
+      
+      if (!is_online) {
+        it.print(120, 160, id(roboto_16), COLOR_WHITE, TextAlign::CENTER, "Disconnected");
+        return;
+      }
+      
+      if (id(display_page) == 0) {
+        // ============ 页面 0: 总览信息 ============
+        int y = 50;
+        
+        // SOC 显示区域
+        it.printf(120, y + 10, id(roboto_24), COLOR_WHITE, TextAlign::CENTER, "SOC: %.0f%%", id(soc).state);
+        
+        // SOC 进度条
+        int bar_width = 200;
+        int bar_height = 25;
+        int bar_x = 20;
+        int bar_y = y + 25;
+        
+        it.rectangle(bar_x, bar_y, bar_width, bar_height, COLOR_WHITE);
+        
+        float progress = id(soc).state / 100.0;
+        int filled_width = bar_width * progress;
+        Color bar_color = progress > 0.5 ? COLOR_GREEN : (progress > 0.2 ? 0xFFFF00 : COLOR_RED);
+        it.filled_rectangle(bar_x + 1, bar_y + 1, filled_width - 2, bar_height - 2, bar_color);
+        
+        y = bar_y + 40;
+        
+        // 电压和电流
+        it.printf(20, y, id(roboto_18), 0x00FFFF, "V: %.2fV", id(total_voltage).state);
+        it.printf(140, y, id(roboto_18), id(current).state >= 0 ? 0x00FF00 : 0xFF8800, 
+                 "%.2fA", id(current).state);
+        
+        y += 28;
+        
+        // 功率
+        it.printf(20, y, id(roboto_18), 0xFF00FF, "P: %.1fW", id(power).state);
+        
+        // 状态指示
+        int status_x = 140;
+        if (id(charging).state) {
+          it.print(status_x, y, id(roboto_14), 0x00FF00, "CHG");
+          status_x += 35;
+        }
+        if (id(discharging).state) {
+          it.print(status_x, y, id(roboto_14), 0xFF8800, "DSG");
+          status_x += 35;
+        }
+        if (id(balancing).state) {
+          it.print(status_x, y, id(roboto_14), 0xFFFF00, "BAL");
+          status_x += 35;
+        }
+        if (id(heating).state) {
+          it.print(status_x, y, id(roboto_14), 0xFF0000, "HEAT");
+        }
+        
+        y += 32;
+        
+        // 温度信息
+        it.printf(20, y, id(roboto_16), 0xFF8800, "T1: %.1fC", id(temperature_1).state);
+        it.printf(130, y, id(roboto_16), 0xFF8800, "T2: %.1fC", id(temperature_2).state);
+        
+        y += 24;
+        
+        it.printf(20, y, id(roboto_16), 0xFF8800, "MOS: %.1fC", id(mosfet_temp).state);
+        it.printf(140, y, id(roboto_16), COLOR_WHITE, "Cycles: %.0f", id(cycles).state);
+        
+        y += 32;
+        
+        // 电芯电压统计
+        it.printf(20, y, id(roboto_16), COLOR_WHITE, "Min: %.3fV", id(min_cell_voltage).state);
+        it.printf(140, y, id(roboto_16), COLOR_WHITE, "Max: %.3fV", id(max_cell_voltage).state);
+        
+        y += 24;
+        
+        it.printf(20, y, id(roboto_16), COLOR_WHITE, "Avg: %.3fV", id(average_cell_voltage).state);
+        it.printf(140, y, id(roboto_16), COLOR_WHITE, "Dif: %.3fV", id(delta_cell_voltage).state);
+        
+      } else if (id(display_page) == 1) {
+        // ============ 页面 1: 电芯详情 ============
+        int y = 50;
+        
+        // 显示前16个电芯电压，分成两列
+        float cell_voltages[16] = {
+          id(cell_voltage_1).state,
+          id(cell_voltage_2).state,
+          id(cell_voltage_3).state,
+          id(cell_voltage_4).state,
+          id(cell_voltage_5).state,
+          id(cell_voltage_6).state,
+          id(cell_voltage_7).state,
+          id(cell_voltage_8).state,
+          id(cell_voltage_9).state,
+          id(cell_voltage_10).state,
+          id(cell_voltage_11).state,
+          id(cell_voltage_12).state,
+          id(cell_voltage_13).state,
+          id(cell_voltage_14).state,
+          id(cell_voltage_15).state,
+          id(cell_voltage_16).state
+        };
+        
+        // 左列 (C1-C8)
+        for (int i = 0; i < 8; i++) {
+          Color cell_color = COLOR_WHITE;
+          float cv = cell_voltages[i];
+          if (cv > 4.2) cell_color = COLOR_RED;
+          else if (cv < 3.0) cell_color = COLOR_RED;
+          else if (cv > 4.1) cell_color = 0xFFFF00;
+          else if (cv < 3.3) cell_color = 0xFF8800;
+          
+          it.printf(20, y + i*18, id(roboto_14), cell_color, 
+                   "C%02d: %.3fV", i+1, cell_voltages[i]);
+        }
+        
+        // 右列 (C9-C16)
+        for (int i = 8; i < 16; i++) {
+          Color cell_color = COLOR_WHITE;
+          float cv = cell_voltages[i];
+          if (cv > 4.2) cell_color = COLOR_RED;
+          else if (cv < 3.0) cell_color = COLOR_RED;
+          else if (cv > 4.1) cell_color = 0xFFFF00;
+          else if (cv < 3.3) cell_color = 0xFF8800;
+          
+          it.printf(130, y + (i-8)*18, id(roboto_14), cell_color, 
+                   "C%02d: %.3fV", i+1, cell_voltages[i]);
+        }
+        
+        y += 8*18 + 20;
+        
+        // 最大最小值
+        it.printf(20, y, id(roboto_14), 0xFFFF00, "Max: %.3fV", id(max_cell_voltage).state);
+        it.printf(130, y, id(roboto_14), 0xFF8800, "Min: %.3fV", id(min_cell_voltage).state);
+        
+      } else if (id(display_page) == 2) {
+        // ============ 页面 2: 信息和状态 ============
+        int y = 50;
+        
+        // 剩余容量
+        it.printf(20, y, id(roboto_16), COLOR_WHITE, "Remaining: %.1fAh", id(capacity_remaining).state);
+        
+        y += 24;
+        
+        // 循环次数
+        it.printf(20, y, id(roboto_16), COLOR_WHITE, "Cycles: %.0f", id(cycles).state);
+        
+        y += 24;
+        
+        // 温度信息
+        it.printf(20, y, id(roboto_16), COLOR_WHITE, "T1: %.1fC   T2: %.1fC", 
+                 id(temperature_1).state, id(temperature_2).state);
+        
+        y += 24;
+        
+        it.printf(20, y, id(roboto_16), COLOR_WHITE, "MOSFET: %.1fC", id(mosfet_temp).state);
+        
+        y += 32;
+        
+        // 状态指示
+        it.print(20, y, id(roboto_16), COLOR_WHITE, "Status:");
+        
+        y += 24;
+        
+        // 状态图标和文字
+        std::string status_text = "";
+        if (id(charging).state) status_text += "Charging ";
+        if (id(discharging).state) status_text += "Discharging ";
+        if (id(balancing).state) status_text += "Balancing ";
+        if (id(heating).state) status_text += "Heating ";
+        
+        if (status_text.empty()) status_text = "Idle";
+        
+        it.print(20, y, id(roboto_14), COLOR_CYAN, status_text.c_str());
+        
+        y += 32;
+        
+        // 版本信息
+        it.printf(20, y, id(roboto_14), COLOR_GRAY, "HW: %s", id(hw_version).state.c_str());
+        
+        y += 20;
+        
+        it.printf(20, y, id(roboto_14), COLOR_GRAY, "SW: %s", id(sw_version).state.c_str());
+      }
+
+# 字体配置
+font:
+  - file: "gfonts://Roboto"
+    id: roboto_14
+    size: 14
+    glyphs:
+      ['&', '@', '!', ',', '.', '?', '"', '%', '(', ')', '+', '-', '_', ':', ';', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '°', '%', 'V', 'A', 'W', 'C', 'H']
+  - file: "gfonts://Roboto"
+    id: roboto_16
+    size: 16
+    glyphs:
+      ['&', '@', '!', ',', '.', '?', '"', '%', '(', ')', '+', '-', '_', ':', ';', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '°', '%', 'V', 'A', 'W', 'C', 'H']
+  - file: "gfonts://Roboto"
+    id: roboto_18
+    size: 18
+    glyphs:
+      ['&', '@', '!', ',', '.', '?', '"', '%', '(', ')', '+', '-', '_', ':', ';', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '°', '%', 'V', 'A', 'W', 'C', 'H']
+  - file: "gfonts://Roboto"
+    id: roboto_20
+    size: 20
+    glyphs:
+      ['&', '@', '!', ',', '.', '?', '"', '%', '(', ')', '+', '-', '_', ':', ';', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '°', '%', 'V', 'A', 'W', 'C', 'H']
+  - file: "gfonts://Roboto"
+    id: roboto_24
+    size: 24
+    glyphs:
+      ['&', '@', '!', ',', '.', '?', '"', '%', '(', ')', '+', '-', '_', ':', ';', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '°', '%', 'V', 'A', 'W', 'C', 'H']
