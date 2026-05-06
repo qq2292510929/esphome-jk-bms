@@ -1,0 +1,328 @@
+substitutions:
+  name: jk-bms-display
+  device_description: "ESP32 C3 with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: C8:47:8C:E1:E2:AA
+  protocol_version: JK02_24S
+  # 显示屏配置
+  display_width: "240"
+  display_height: "320"
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+external_components:
+  - source: ${external_components_source}
+    refresh: 0s
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  ap:
+    ssid: ${name}
+    password: "12345678"
+
+captive_portal:
+
+ota:
+  platform: esphome
+  on_begin:
+    then:
+      - switch.turn_off: ble_client_switch0
+      - logger.log: "BLE connection suspended for OTA update"
+
+logger:
+  level: INFO
+  logs:
+    esp32_ble_tracker: INFO
+    esp32_ble_client: INFO
+
+api:
+
+# 蓝牙配置
+esp32_ble_tracker:
+  scan_parameters:
+    active: false
+
+ble_client:
+  - mac_address: ${mac_address}
+    id: client0
+
+# JK-BMS 蓝牙组件
+jk_bms_ble:
+  - ble_client_id: client0
+    protocol_version: ${protocol_version}
+    throttle: 3s
+    id: bms0
+
+# 传感器配置 - 用于显示屏显示
+sensor:
+  - platform: jk_bms_ble
+    jk_bms_ble_id: bms0
+    min_cell_voltage:
+      id: min_cell_voltage
+      internal: true
+    max_cell_voltage:
+      id: max_cell_voltage
+      internal: true
+    delta_cell_voltage:
+      id: delta_cell_voltage
+      internal: true
+    average_cell_voltage:
+      id: average_cell_voltage
+      internal: true
+    cell_voltage_1:
+      id: cell_voltage_1
+      internal: true
+    cell_voltage_2:
+      id: cell_voltage_2
+      internal: true
+    cell_voltage_3:
+      id: cell_voltage_3
+      internal: true
+    cell_voltage_4:
+      id: cell_voltage_4
+      internal: true
+    cell_voltage_5:
+      id: cell_voltage_5
+      internal: true
+    cell_voltage_6:
+      id: cell_voltage_6
+      internal: true
+    cell_voltage_7:
+      id: cell_voltage_7
+      internal: true
+    cell_voltage_8:
+      id: cell_voltage_8
+      internal: true
+    cell_voltage_9:
+      id: cell_voltage_9
+      internal: true
+    cell_voltage_10:
+      id: cell_voltage_10
+      internal: true
+    cell_voltage_11:
+      id: cell_voltage_11
+      internal: true
+    cell_voltage_12:
+      id: cell_voltage_12
+      internal: true
+    cell_voltage_13:
+      id: cell_voltage_13
+      internal: true
+    cell_voltage_14:
+      id: cell_voltage_14
+      internal: true
+    cell_voltage_15:
+      id: cell_voltage_15
+      internal: true
+    cell_voltage_16:
+      id: cell_voltage_16
+      internal: true
+    total_voltage:
+      id: total_voltage
+      internal: true
+    current:
+      id: current
+      internal: true
+    power:
+      id: power
+      internal: true
+    temperature_sensor_1:
+      id: temperature_1
+      internal: true
+    temperature_sensor_2:
+      id: temperature_2
+      internal: true
+    power_tube_temperature:
+      id: mosfet_temp
+      internal: true
+    state_of_charge:
+      id: soc
+      internal: true
+    capacity_remaining:
+      id: capacity_remaining
+      internal: true
+    charging_cycles:
+      id: cycles
+      internal: true
+
+binary_sensor:
+  - platform: jk_bms_ble
+    balancing:
+      id: balancing
+      internal: true
+    charging:
+      id: charging
+      internal: true
+    online_status:
+      id: online_status
+      internal: true
+
+switch:
+  - platform: ble_client
+    ble_client_id: client0
+    id: ble_client_switch0
+    name: "Enable Bluetooth"
+
+text_sensor:
+  - platform: jk_bms_ble
+    errors:
+      id: errors
+      internal: true
+
+# ST7789 SPI 显示驱动配置
+spi:
+  clk_pin: GPIO6
+  mosi_pin: GPIO7
+  miso_pin: GPIO2
+
+display:
+  - platform: st7789v
+    model: CUSTOM
+    width: ${display_width}
+    height: ${display_height}
+    reset_pin: GPIO10
+    cs_pin: GPIO5
+    dc_pin: GPIO4
+    rotation: 270
+    backlight_pin: GPIO8
+    id: my_display
+    update_interval: 3s
+    lambda: |-
+      // 绘制背景
+      it.fill(COLOR_BLACK);
+      
+      // 绘制顶部标题栏
+      it.rectangle(0, 0, ${display_width}, 40, COLOR_BLUE);
+      it.filled_rectangle(0, 0, ${display_width}, 40, COLOR_BLUE);
+      it.print(120, 20, id(roboto_24), COLOR_WHITE, TextAlign::CENTER, "JK-BMS Monitor");
+      
+      // 检查是否在线
+      bool is_online = id(online_status).state;
+      
+      // 绘制在线状态
+      if (is_online) {
+        it.filled_circle(20, 20, 6, COLOR_GREEN);
+      } else {
+        it.filled_circle(20, 20, 6, COLOR_RED);
+      }
+      
+      if (!is_online) {
+        it.print(120, 160, id(roboto_16), COLOR_WHITE, TextAlign::CENTER, "Disconnected");
+        return;
+      }
+      
+      // 1. SOC 显示区域 - 大字体
+      int y = 50;
+      it.printf(120, y + 15, id(roboto_20), COLOR_WHITE, TextAlign::CENTER, "SOC: %.1f%%", id(soc).state);
+      
+      // 绘制 SOC 进度条
+      int bar_width = 200;
+      int bar_height = 20;
+      int bar_x = 20;
+      int bar_y = y + 30;
+      
+      it.rectangle(bar_x, bar_y, bar_width, bar_height, COLOR_WHITE);
+      
+      float progress = id(soc).state / 100.0;
+      int filled_width = bar_width * progress;
+      Color bar_color = progress > 0.5 ? COLOR_GREEN : (progress > 0.2 ? COLOR_YELLOW : COLOR_RED);
+      it.filled_rectangle(bar_x + 1, bar_y + 1, filled_width - 2, bar_height - 2, bar_color);
+      
+      y = bar_y + 30;
+      
+      // 2. 电压和电流区域
+      it.printf(20, y, id(roboto_16), COLOR_CYAN, "Total: %.2fV", id(total_voltage).state);
+      it.printf(140, y, id(roboto_16), id(current).state >= 0 ? COLOR_GREEN : COLOR_ORANGE, 
+               "%.2fA", id(current).state);
+      
+      y += 25;
+      
+      // 3. 功率
+      it.printf(20, y, id(roboto_16), COLOR_MAGENTA, "Power: %.1fW", id(power).state);
+      
+      // 充电状态指示
+      if (id(charging).state) {
+        it.print(180, y, id(roboto_16), COLOR_GREEN, "CHG");
+      }
+      if (id(balancing).state) {
+        it.print(200, y, id(roboto_16), COLOR_YELLOW, "BAL");
+      }
+      
+      y += 25;
+      
+      // 4. 温度区域
+      it.printf(20, y, id(roboto_16), COLOR_ORANGE, "T1: %.1f°C", id(temperature_1).state);
+      it.printf(120, y, id(roboto_16), COLOR_ORANGE, "T2: %.1f°C", id(temperature_2).state);
+      
+      y += 25;
+      
+      it.printf(20, y, id(roboto_16), COLOR_ORANGE, "MOS: %.1f°C", id(mosfet_temp).state);
+      it.printf(140, y, id(roboto_16), COLOR_WHITE, "Cycles: %.0f", id(cycles).state);
+      
+      y += 35;
+      
+      // 5. 电芯电压 - 区域标题
+      it.print(120, y, id(roboto_16), COLOR_WHITE, TextAlign::CENTER, "Cell Voltages");
+      y += 20;
+      
+      // 电芯电压表格 - 显示前8个电芯
+      float cell_voltages[8] = {
+        id(cell_voltage_1).state,
+        id(cell_voltage_2).state,
+        id(cell_voltage_3).state,
+        id(cell_voltage_4).state,
+        id(cell_voltage_5).state,
+        id(cell_voltage_6).state,
+        id(cell_voltage_7).state,
+        id(cell_voltage_8).state
+      };
+      
+      // 两列显示
+      for (int i = 0; i < 4; i++) {
+        Color cell_color = COLOR_WHITE;
+        float cv = cell_voltages[i];
+        if (cv > 4.2) cell_color = COLOR_RED;
+        else if (cv < 3.0) cell_color = COLOR_RED;
+        else if (cv > 4.1) cell_color = COLOR_YELLOW;
+        
+        it.printf(20, y + i*18, id(roboto_14), cell_color, 
+                 "C%d: %.3fV", i+1, cell_voltages[i]);
+      }
+      
+      for (int i = 4; i < 8; i++) {
+        Color cell_color = COLOR_WHITE;
+        float cv = cell_voltages[i];
+        if (cv > 4.2) cell_color = COLOR_RED;
+        else if (cv < 3.0) cell_color = COLOR_RED;
+        else if (cv > 4.1) cell_color = COLOR_YELLOW;
+        
+        it.printf(140, y + (i-4)*18, id(roboto_14), cell_color, 
+                 "C%d: %.3fV", i+1, cell_voltages[i]);
+      }
+
+font:
+  - file: "gfonts://Roboto"
+    id: roboto_14
+    size: 14
+  - file: "gfonts://Roboto"
+    id: roboto_16
+    size: 16
+  - file: "gfonts://Roboto"
+    id: roboto_20
+    size: 20
+  - file: "gfonts://Roboto"
+    id: roboto_24
+    size: 24
