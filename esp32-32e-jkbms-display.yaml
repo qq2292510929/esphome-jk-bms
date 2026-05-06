@@ -480,3 +480,421 @@ font:
     size: 24
     glyphs:
       ['&', '@', '!', ',', '.', '?', '"', '%', '(', ')', '+', '-', '_', ':', ';', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '°', '%', 'V', 'A', 'W', 'C', 'H']
+substitutions:
+  name: jksubstitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST77substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_componentssubstitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address:substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:0substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO1substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st778substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_gsubstitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphomesubstitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment:substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jksubstitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(display_page) = 0;
+
+esp32:
+  board: espsubstitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(display_page) = 0;
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+  platformio_options:substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(display_page) = 0;
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.f_flash: 80substitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(display_page) = 0;
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.f_flash: 80000000L
+
+external_components:
+  - source: ${external_components_sourcesubstitutions:
+  name: jk-bms-display
+  device_description: "ESP32-32E with ST7789 2.8\" display monitoring JK-BMS via BLE"
+  external_components_source: github://syssi/esphome-jk-bms@main
+  mac_address: 98:DA:20:07:B9:00
+  protocol_version: JK02_24S
+  display_width: "240"
+  display_height: "320"
+  spi_clk_pin: GPIO14
+  spi_mosi_pin: GPIO13
+  spi_miso_pin: GPIO12
+  st7789_cs_pin: GPIO15
+  st7789_dc_pin: GPIO2
+  st7789_reset_pin: GPIO4
+  st7789_backlight_pin: GPIO21
+  button_pin: GPIO0
+  led_red_pin: GPIO22
+  led_green_pin: GPIO16
+  led_blue_pin: GPIO17
+
+esphome:
+  name: ${name}
+  friendly_name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jk-bms-display"
+    version: 1.0.0
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(display_page) = 0;
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.f_flash: 80000000L
+
+external_components:
+  - source: ${external_components_source}
+    refresh: 0s
+
+wifi:
+  ssid: !secret wifi_ss
